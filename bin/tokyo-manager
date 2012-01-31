@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'thor'
+require 'active_support/core_ext'
+
+module TokyoManager
+  class CLI < Thor
+    include Thor::Actions
+    default_task :help
+
+    desc 'start', 'Start a new instance of TokyoTyrant'
+    method_option :master, :type => :boolean, :default => false, :alias => '-m', :desc => 'start a master instance'
+    method_option :slave, :type => :boolean, :default => false, :alias => '-s', :desc => 'start a slave instance'
+    method_option :date, :type => :string, :alias => '-d', :desc => 'the date to start an instance for (YYYYMM)'
+    def start
+      if options.master?
+        start_master(options)
+      elsif options.slave?
+        start_slave(options)
+      else
+        invoke :help, [:start]
+      end
+    end
+
+    no_tasks do
+      def instance_date(options)
+        if options.date
+          Date.new(options.date[0..3].to_i, options.date[4..5].to_i)
+        else
+          Date.today.next_month.beginning_of_month
+        end
+      end
+
+      def start_master(options)
+        date = instance_date(options)
+        puts "Starting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}."
+      end
+
+      def start_slave(options)
+        date = instance_date(options)
+        puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}."
+      end
+    end
+  end
+end
+
+TokyoManager::CLI.start
+
+# vim: filetype=ruby
