@@ -4,6 +4,9 @@ require 'rubygems'
 require 'thor'
 require 'active_support/core_ext'
 
+$:.push File.expand_path('../../lib', __FILE__)
+require 'tokyo_manager'
+
 module TokyoManager
   class CLI < Thor
     include Thor::Actions
@@ -42,16 +45,24 @@ module TokyoManager
 
       def start_master(options)
         date = instance_date(options)
-        puts "Starting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}."
+        puts "Starting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
 
-        TokyoManager.start_master_for_date(date)
+        begin
+          TokyoManager.start_master_for_date(date)
+        rescue => e
+          puts e.message
+        end
       end
 
       def start_slave(options)
         date = instance_date(options)
-        puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}."
+        puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
 
-        TokyoManager.start_slave_for_date(date)
+        begin
+          TokyoManager.start_slave_for_date(date)
+        rescue => e
+          puts e.message
+        end
       end
     end
   end
