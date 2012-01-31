@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>org.tokyotyrant.ttserver-<%= @template_arguments[:date].strftime('%Y%m') %></string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/ttserver</string>
+    <string>-port</string>
+    <string><%= @template_arguments[:port] %></string>
+    <string>-log</string>
+    <string><%= log_directory %>/ttserver-<%= @template_arguments[:date].strftime('%Y%m') %>.log</string>
+    <string><%= data_directory %>/db-<%= @template_arguments[:date].strftime('%Y%m') %>.tch#bnum=40000#lcnum=40960#opts=lb</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>UserName</key>
+  <string><%= ENV['USER'] %></string>
+  <key>WorkingDirectory</key>
+  <string>/usr/local</string>
+  <key>StandardErrorPath</key>
+  <string><%= log_directory %>/output-<%= @template_arguments[:date].strftime('%Y%m') %>.log</string>
+  <key>StandardOutPath</key>
+  <string><%= log_directory %>/output-<%= @template_arguments[:date].strftime('%Y%m') %>.log</string>
+</dict>
+</plist>
