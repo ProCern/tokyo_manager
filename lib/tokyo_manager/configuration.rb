@@ -9,11 +9,7 @@ module TokyoManager
     end
 
     def default_port
-      if rails_configuration
-        Integer(rails_configuration['port']) || 1978
-      else
-        1978
-      end
+      (rails_configuration && rails_configuration['port']) ? Integer(rails_configuration['port']) : 1978
     end
 
     private
