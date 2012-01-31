@@ -1,5 +1,22 @@
 module TokyoManager
-  module ConnectionManager
+  def self.connection_for_date(date)
+    connection = ConnectionManager.new.connection_for_date(date)
+
+    if block_given?
+      begin
+        yield connection
+      ensure
+        connection.close
+      end
+    else
+      connection
+    end
+  end
+
+  class ConnectionManager
+    include TokyoManager::Configuration
+    include TokyoManager::Helpers
+
     def connection_for_date(date)
       port = master_port_for_date(date)
 
