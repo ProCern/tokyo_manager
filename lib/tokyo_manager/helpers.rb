@@ -15,10 +15,10 @@ module TokyoManager
     end
 
     def linux?
-      !osx?
+      !darwin?
     end
 
-    def osx?
+    def darwin?
       RUBY_PLATFORM =~ /darwin/
     end
 
