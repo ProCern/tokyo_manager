@@ -1,7 +1,7 @@
 module TokyoManager
   module ConnectionManager
     def connection_for_date(date)
-      port = port_for_date(date)
+      port = master_port_for_date(date)
 
       begin
         connection = TokyoTyrant::DB.new(host, port)

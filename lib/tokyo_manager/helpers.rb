@@ -1,12 +1,17 @@
 module TokyoManager
   module Helpers
-    BASE_PORT = 10000
+    MASTER_BASE_PORT = 10000
+    SLAVE_BASE_PORT = 12000
 
     EPOCH_YEAR = Time.at(0).year
     EPOCH_MONTH = Time.at(0).month
 
-    def port_for_date(date)
-      months_since_epoch(date) + BASE_PORT
+    def master_port_for_date(date)
+      months_since_epoch(date) + MASTER_BASE_PORT
+    end
+
+    def slave_port_for_date(date)
+      months_since_epoch(date) + SLAVE_BASE_PORT
     end
 
     def linux?
