@@ -9,6 +9,9 @@ module TokyoManager
     include Thor::Actions
     default_task :help
 
+    map '-v' => 'version'
+    map '--version' => 'version'
+
     desc 'start', 'Start a new instance of TokyoTyrant'
     method_option :master, :type => :boolean, :default => false, :alias => '-m', :desc => 'start a master instance'
     method_option :slave, :type => :boolean, :default => false, :alias => '-s', :desc => 'start a slave instance'
@@ -23,6 +26,11 @@ module TokyoManager
       end
     end
 
+    desc 'version', 'Shows the version'
+    def version
+      puts "tokyo_manager #{TokyoManager::VERSION}"
+    end
+
     no_tasks do
       def instance_date(options)
         if options.date
@@ -35,11 +43,15 @@ module TokyoManager
       def start_master(options)
         date = instance_date(options)
         puts "Starting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}."
+
+        TokyoManager.start_master_for_date(date)
       end
 
       def start_slave(options)
         date = instance_date(options)
         puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}."
+
+        TokyoManager.start_slave_for_date(date)
       end
     end
   end
