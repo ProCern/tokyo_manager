@@ -9,11 +9,15 @@ module TokyoManager
     end
 
     def start_server(type, date)
-      `launchctl load -w #{launchd_script_filename(date)}`
+      if type == :master
+        Shell.execute "launchctl load -w #{launchd_script_filename(date)}"
+      end
     end
 
     def stop_server(type, date)
-      `launchctl unload -w #{launchd_script_filename(date)}`
+      if type == :master
+        Shell.execute "launchctl unload -w #{launchd_script_filename(date)}"
+      end
     end
 
     def data_directory
@@ -24,10 +28,14 @@ module TokyoManager
       '/usr/local/var/log/tokyo-tyrant'
     end
 
+    def script_directory
+      "#{ENV['HOME']}/Library/LaunchAgents"
+    end
+
     private
 
     def launchd_script_filename(date)
-      "#{ENV['HOME']}/Library/LaunchAgents/org.tokyotyrant.ttserver-#{date.strftime('%Y%m')}.plist"
+      "#{script_directory}/org.tokyotyrant.ttserver-#{date.strftime('%Y%m')}.plist"
     end
 
     def create_launchd_script(port, date)
