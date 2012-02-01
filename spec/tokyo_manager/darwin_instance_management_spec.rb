@@ -23,7 +23,7 @@ describe TokyoManager::DarwinInstanceManagement do
 
   describe "create_slave_launch_script" do
     it "is not supported" do
-      lambda { subject.create_slave_launch_script(12345, 23456, Date.today) }.should raise_error('Slave instances are only supported on Linux')
+      lambda { subject.create_slave_launch_script('tt.ssbe.api', 12345, 23456, Date.today) }.should raise_error('Slave instances are only supported on Linux')
     end
   end
 

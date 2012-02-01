@@ -41,6 +41,10 @@ To start a new slave instance of TokyoTyrant for next month:
 
     tokyo-manager start --slave
 
+When starting a new slave, if the master is on a different host than the slave, provide the host for the master:
+
+    tokyo-manager start --slave --host tt.ssbe.api
+
 To specify the month to start the instance for, give the date in YYYYMM format:
 
     tokyo-manager start --master --date 201201

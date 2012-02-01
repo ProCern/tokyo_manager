@@ -37,7 +37,7 @@ describe TokyoManager::LinuxInstanceManagement do
     end
 
     it "creates an upstart script" do
-      subject.create_slave_launch_script(12345, 23456, Date.new(2012, 2, 1))
+      subject.create_slave_launch_script('tt.ssbe.api', 12345, 23456, Date.new(2012, 2, 1))
 
       File.exists?(file_path).should be_true
 
@@ -97,7 +97,7 @@ describe TokyoManager::LinuxInstanceManagement do
       it "does nothing" do
         subject.should_not_receive(:create_upstart_script)
         subject.should_not_receive(:restart_server)
-        subject.reduce_old_slave_server_memory(Date.new(2012, 2, 1))
+        subject.reduce_old_slave_server_memory('tt.ssbe.api', Date.new(2012, 2, 1))
       end
     end
 
@@ -110,7 +110,7 @@ describe TokyoManager::LinuxInstanceManagement do
       end
 
       it "reduces its memory usage" do
-        subject.reduce_old_slave_server_memory(Date.new(2012, 2, 1))
+        subject.reduce_old_slave_server_memory('tt.ssbe.api', Date.new(2012, 2, 1))
 
         File.exists?(file_path).should be_true
 

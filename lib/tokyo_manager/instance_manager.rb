@@ -18,8 +18,8 @@ module TokyoManager
   # Example usage:
   #
   #     TokyoManager.start_slave_for_date(Date.new(2012, 2, 1))
-  def self.start_slave_for_date(date)
-    InstanceManager.new.start_slave_for_date(date)
+  def self.start_slave_for_date(date, master_host = host)
+    InstanceManager.new.start_slave_for_date(date master_host)
   end
 
   # Provides methods for managing instances of TokyoTyrant.
@@ -58,7 +58,7 @@ module TokyoManager
     # Otherwise, a launch script is created and the new server is started. If
     # supported, the instance used to store data 2 months prior to the given
     # date is reconfigured to use less memory and restarted.
-    def start_slave_for_date(date)
+    def start_slave_for_date(date, master_host)
       master_port = master_port_for_date(date)
       slave_port = slave_port_for_date(date)
 
@@ -66,9 +66,9 @@ module TokyoManager
         raise "Server is already running for #{date.strftime('%m/%Y')} on port #{slave_port}"
       end
 
-      create_slave_launch_script(master_port, slave_port, date)
+      create_slave_launch_script(master_host, master_port, slave_port, date)
       start_server(:slave, date)
-      reduce_old_slave_server_memory(date) if respond_to?(:reduce_old_slave_server_memory)
+      reduce_old_slave_server_memory(master_host, date) if respond_to?(:reduce_old_slave_server_memory)
     end
 
     private

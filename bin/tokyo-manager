@@ -19,6 +19,7 @@ module TokyoManager
   #     tokyo-manager start --master --date 201202
   #     tokyo-manager start --slave
   #     tokyo-manager start --slave --date 201202
+  #     tokyo-manager start --slave --master-host tt.ssbe.api
   class CLI < Thor
     include Thor::Actions
     default_task :help
@@ -30,6 +31,7 @@ module TokyoManager
     method_option :master, :type => :boolean, :default => false, :alias => '-m', :desc => 'start a master instance'
     method_option :slave, :type => :boolean, :default => false, :alias => '-s', :desc => 'start a slave instance'
     method_option :date, :type => :string, :alias => '-d', :desc => 'the date to start an instance for (YYYYMM)'
+    method_option :'master-host', :type => :string, :alias => '-h', :desc => 'when starting a slave, the host the master is on'
 
     # Starts a new TokyoTyrant server instance as either a master or a slave.
     def start
@@ -79,7 +81,7 @@ module TokyoManager
         puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
 
         begin
-          TokyoManager.start_slave_for_date(date)
+          TokyoManager.start_slave_for_date(date, options.delete[:'master-host'])
         rescue => e
           puts e.message
         end

@@ -37,7 +37,7 @@ describe "TokyoManager::InstanceManager" do
       end
 
       it "raises an error" do
-        lambda { subject.start_slave_for_date(Date.new(2012, 2, 1)) }.should raise_error('Server is already running for 02/2012 on port 12505')
+        lambda { subject.start_slave_for_date(Date.new(2012, 2, 1), 'tt.ssbe.api') }.should raise_error('Server is already running for 02/2012 on port 12505')
       end
     end
 
@@ -50,7 +50,7 @@ describe "TokyoManager::InstanceManager" do
         subject.should_receive(:create_slave_launch_script)
         subject.should_receive(:start_server)
         subject.should_receive(:reduce_old_slave_server_memory)
-        subject.start_slave_for_date(Date.new(2012, 2, 1))
+        subject.start_slave_for_date(Date.new(2012, 2, 1), 'tt.ssbe.api')
       end
     end
   end

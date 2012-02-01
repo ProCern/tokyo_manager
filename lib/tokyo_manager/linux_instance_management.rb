@@ -10,8 +10,8 @@ module TokyoManager
     end
 
     # Creates an upstart script for running a slave instance of TokyoTyrant.
-    def create_slave_launch_script(master_port, slave_port, date)
-      arguments = default_slave_server_arguments(master_port, slave_port, date)
+    def create_slave_launch_script(master_host, master_port, slave_port, date)
+      arguments = default_slave_server_arguments(master_host, master_port, slave_port, date)
       create_upstart_script(:slave, date, arguments)
     end
 
@@ -33,13 +33,13 @@ module TokyoManager
     # If a slave server is running to store data for 2 months prior to the
     # given date, its configuration is modified to use less memory and it is
     # restarted.
-    def reduce_old_slave_server_memory(date)
+    def reduce_old_slave_server_memory(master_host, date)
       date -= 2.months
       master_port = master_port_for_date(date)
       slave_port = slave_port_for_date(date)
 
       if File.exists?(upstart_script_filename(:slave, date)) && server_running_on_port?(slave_port)
-        arguments = default_slave_server_arguments(master_port, slave_port, date).merge(:xmsiz => '134217728')
+        arguments = default_slave_server_arguments(master_host, master_port, slave_port, date).merge(:xmsiz => '134217728')
         create_upstart_script(:slave, date, arguments)
 
         restart_server(:slave, date)
@@ -97,11 +97,11 @@ module TokyoManager
     end
 
     # Gets the default arguments used to start a slave instance of TokyoTyrant.
-    def default_slave_server_arguments(master_port, slave_port, date)
+    def default_slave_server_arguments(master_host, master_port, slave_port, date)
       {
         :sid => '2',
         :thnum => '24',
-        :mhost => 'tt.ssbe.api',
+        :mhost => master_host,
         :mport => master_port,
         :format => 'tch',
         :bnum => '503316469',

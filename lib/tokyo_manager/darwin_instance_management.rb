@@ -8,7 +8,7 @@ module TokyoManager
 
     # Creates a launchd script for running a slave instance of TokyoTyrant.
     # This is not supported on Mac OS X.
-    def create_slave_launch_script(master_port, slave_port, date)
+    def create_slave_launch_script(master_host, master_port, slave_port, date)
       raise 'Slave instances are only supported on Linux'
     end
 
