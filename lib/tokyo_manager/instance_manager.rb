@@ -17,8 +17,8 @@ module TokyoManager
   #
   # Example usage:
   #
-  #     TokyoManager.start_slave_for_date(Date.new(2012, 2, 1))
-  def self.start_slave_for_date(date, master_host = host)
+  #     TokyoManager.start_slave_for_date(Date.new(2012, 2, 1), 'tt.ssbe.api')
+  def self.start_slave_for_date(date, master_host)
     InstanceManager.new.start_slave_for_date(date, master_host)
   end
 
