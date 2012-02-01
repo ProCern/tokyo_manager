@@ -15,9 +15,9 @@ module TokyoManager
 
     def initialize
       if linux?
-        include TokyoManager::LinuxInstanceManagement
+        extend TokyoManager::LinuxInstanceManagement
       else
-        include TokyoManager::DarwinInstanceManagement
+        extend TokyoManager::DarwinInstanceManagement
       end
     end
 
@@ -37,8 +37,8 @@ module TokyoManager
       master_port = master_port_for_date(date)
       slave_port = slave_port_for_date(date)
 
-      if server_running_on_port?(port)
-        raise "Server is already running for #{date.strftime('%m/%Y')} on port #{port}"
+      if server_running_on_port?(slave_port)
+        raise "Server is already running for #{date.strftime('%m/%Y')} on port #{slave_port}"
       end
 
       create_slave_launch_script(master_port, slave_port, date)
