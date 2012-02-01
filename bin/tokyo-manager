@@ -8,6 +8,17 @@ $:.push File.expand_path('../../lib', __FILE__)
 require 'tokyo_manager'
 
 module TokyoManager
+  # Provides an executable that can be used to start new instances of
+  # TokyoTyrant. By default an instance is started to store the data for one
+  # month from the current date. This can be overridden by providing a date on
+  # the command line.
+  #
+  # Example usage:
+  #
+  #     tokyo-manager start --master
+  #     tokyo-manager start --master --date 201202
+  #     tokyo-manager start --slave
+  #     tokyo-manager start --slave --date 201202
   class CLI < Thor
     include Thor::Actions
     default_task :help
@@ -19,6 +30,8 @@ module TokyoManager
     method_option :master, :type => :boolean, :default => false, :alias => '-m', :desc => 'start a master instance'
     method_option :slave, :type => :boolean, :default => false, :alias => '-s', :desc => 'start a slave instance'
     method_option :date, :type => :string, :alias => '-d', :desc => 'the date to start an instance for (YYYYMM)'
+
+    # Starts a new TokyoTyrant server instance as either a master or a slave.
     def start
       if options.master?
         start_master(options)
@@ -30,11 +43,16 @@ module TokyoManager
     end
 
     desc 'version', 'Shows the version'
+
+    # Prints the current version of the gem.
     def version
       puts "tokyo_manager #{TokyoManager::VERSION}"
     end
 
     no_tasks do
+      # Parses the date given on the command line or returns the beginning of
+      # next month if no date was given. This date is used to determine which
+      # date to start an instance for.
       def instance_date(options)
         if options.date
           Date.new(options.date[0..3].to_i, options.date[4..5].to_i)
@@ -43,6 +61,7 @@ module TokyoManager
         end
       end
 
+      # Starts a master TokyoTyrant instance.
       def start_master(options)
         date = instance_date(options)
         puts "Starting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
@@ -54,6 +73,7 @@ module TokyoManager
         end
       end
 
+      # Starts a slave TokyoTyrant instance.
       def start_slave(options)
         date = instance_date(options)
         puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
