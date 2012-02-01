@@ -1,3 +1,5 @@
+require 'active_support/core_ext'
+
 module TokyoManager
   module LinuxInstanceManagement
     def create_master_launch_script(port, date)
@@ -6,7 +8,7 @@ module TokyoManager
     end
 
     def create_slave_launch_script(master_port, slave_port, date)
-      arguments = default_master_server_arguments(port, date).merge(:xmsiz => '268435456')
+      arguments = default_slave_server_arguments(master_port, slave_port, date)
       create_upstart_script(:slave, date, arguments)
     end
 
@@ -14,11 +16,11 @@ module TokyoManager
       date -= 2.months
       port = master_port_for_date(date)
 
-      if server_running_on_port?(port) && File.exists?(upstart_script_filename(:master, date))
+      if File.exists?(upstart_script_filename(:master, date)) && server_running_on_port?(port)
         arguments = default_master_server_arguments(port, date).merge(:xmsiz => '268435456')
         create_upstart_script(:master, date, arguments)
 
-        restart_server(date)
+        restart_server(:master, date)
       end
     end
 
@@ -27,20 +29,20 @@ module TokyoManager
       master_port = master_port_for_date(date)
       slave_port = slave_port_for_date(date)
 
-      if server_running_on_port?(port) && File.exists?(upstart_script_filename(:slave, date))
-        arguments = default_slave_server_arguments(port, date).merge(:xmsiz => '134217728')
+      if File.exists?(upstart_script_filename(:slave, date)) && server_running_on_port?(slave_port)
+        arguments = default_slave_server_arguments(master_port, slave_port, date).merge(:xmsiz => '134217728')
         create_upstart_script(:slave, date, arguments)
 
-        restart_server(date)
+        restart_server(:slave, date)
       end
     end
 
     def start_server(type, date)
-      `start #{upstart_script_filename(type, date)}`
+      Shell.execute "start #{upstart_script_filename(type, date).gsub(/^#{script_directory}\//, '').gsub(/\.conf$/, '')}"
     end
 
     def stop_server(type, date)
-      `stop #{upstart_script_filename(type, date)}`
+      Shell.execute "stop #{upstart_script_filename(type, date).gsub(/^#{script_directory}\//, '').gsub(/\.conf$/, '')}"
     end
 
     def data_directory
@@ -51,10 +53,14 @@ module TokyoManager
       '/var/log/tokyotyrant'
     end
 
+    def script_directory
+      '/etc/init'
+    end
+
     private
 
     def upstart_script_filename(type, date)
-      "/etc/init/ttserver-#{type}-#{date.strftime('%Y%m')}.conf"
+      "#{script_directory}/ttserver-#{type}-#{date.strftime('%Y%m')}.conf"
     end
 
     def default_master_server_arguments(port, date)
