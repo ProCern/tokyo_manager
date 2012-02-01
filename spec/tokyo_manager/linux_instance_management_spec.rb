@@ -67,7 +67,7 @@ describe TokyoManager::LinuxInstanceManagement do
     context "when the old server is running" do
       before do
         FileUtils.touch file_path
-        subject.should_receive(:server_running_on_port?).with(10504).and_return(true)
+        subject.should_receive(:server_running_on_port?).with(10503).and_return(true)
         subject.should_receive(:stop_server).with(:master, Date.new(2011, 12, 1))
         subject.should_receive(:start_server).with(:master, Date.new(2011, 12, 1))
       end
@@ -79,7 +79,7 @@ describe TokyoManager::LinuxInstanceManagement do
 
         contents = File.read(file_path)
         contents.should match(/ssdata-master-201112/)
-        contents.should match(/-port 10504/)
+        contents.should match(/-port 10503/)
         contents.should match(/xmsiz=268435456/)
       end
     end
@@ -104,7 +104,7 @@ describe TokyoManager::LinuxInstanceManagement do
     context "when the old server is running" do
       before do
         FileUtils.touch file_path
-        subject.should_receive(:server_running_on_port?).with(12504).and_return(true)
+        subject.should_receive(:server_running_on_port?).with(12503).and_return(true)
         subject.should_receive(:stop_server).with(:slave, Date.new(2011, 12, 1))
         subject.should_receive(:start_server).with(:slave, Date.new(2011, 12, 1))
       end
@@ -116,8 +116,8 @@ describe TokyoManager::LinuxInstanceManagement do
 
         contents = File.read(file_path)
         contents.should match(/ssdata-slave-201112/)
-        contents.should match(/-port 12504/)
-        contents.should match(/-mport 10504/)
+        contents.should match(/-port 12503/)
+        contents.should match(/-mport 10503/)
         contents.should match(/xmsiz=134217728/)
       end
     end

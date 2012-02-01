@@ -3,8 +3,8 @@ module TokyoManager
     MASTER_BASE_PORT = 10000
     SLAVE_BASE_PORT = 12000
 
-    EPOCH_YEAR = Time.at(0).year
-    EPOCH_MONTH = Time.at(0).month
+    EPOCH_YEAR = 1970
+    EPOCH_MONTH = 1
 
     def master_port_for_date(date)
       months_since_epoch(date) + MASTER_BASE_PORT
@@ -19,10 +19,14 @@ module TokyoManager
     end
 
     def darwin?
-      RUBY_PLATFORM =~ /darwin/
+      platform =~ /darwin/
     end
 
     private
+
+    def platform
+      RUBY_PLATFORM
+    end
 
     def months_since_epoch(date)
       ((EPOCH_YEAR - date.year).abs * 12) + (EPOCH_MONTH - date.month).abs
