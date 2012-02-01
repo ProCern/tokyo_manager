@@ -82,7 +82,7 @@ module TokyoManager
         puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
 
         begin
-          TokyoManager.start_slave_for_date(date, options.delete[:'master-host'])
+          TokyoManager.start_slave_for_date(date, options[:'master-host'])
         rescue => e
           puts e.message
         end

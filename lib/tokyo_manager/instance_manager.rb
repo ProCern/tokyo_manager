@@ -19,7 +19,7 @@ module TokyoManager
   #
   #     TokyoManager.start_slave_for_date(Date.new(2012, 2, 1))
   def self.start_slave_for_date(date, master_host = host)
-    InstanceManager.new.start_slave_for_date(date master_host)
+    InstanceManager.new.start_slave_for_date(date, master_host)
   end
 
   # Provides methods for managing instances of TokyoTyrant.
