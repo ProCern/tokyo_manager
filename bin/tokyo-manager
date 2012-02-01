@@ -6,6 +6,7 @@ require 'active_support/core_ext'
 
 $:.push File.expand_path('../../lib', __FILE__)
 require 'tokyo_manager'
+require 'tokyo_manager/version'
 
 module TokyoManager
   # Provides an executable that can be used to start new instances of
