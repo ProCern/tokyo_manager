@@ -3,6 +3,10 @@ require 'spec_helper'
 describe TokyoManager::ConnectionManager do
   let(:date) { Date.new(2012, 1, 31) }
 
+  before do
+    TokyoManager.clear_connections!
+  end
+
   describe "connection_for_date" do
     context "when an instance is running for the date" do
       let(:connection) { Object.new }
