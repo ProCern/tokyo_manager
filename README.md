@@ -41,7 +41,8 @@ To start a new slave instance of TokyoTyrant for next month:
 
     tokyo-manager start --slave
 
-When starting a new slave, if the master is on a different host than the slave, provide the host for the master:
+When starting a new slave, if the master is on a different host than the slave,
+provide the host for the master:
 
     tokyo-manager start --slave --host tt.ssbe.api
 
@@ -61,9 +62,9 @@ instance by calling:
     TokyoManager.connection_for_date(date)
 
 If an instance is running for the specified date, a connection to that instance
-will be returned. Otherwise, a connection to the instance running on the default
-port will be returned. If no connection can be established, an error will be
-raised.
+will be returned. Otherwise, a connection to the instance running on the
+default port will be returned. If no connection can be established, an error
+will be raised.
 
 This method will yeild the connection to a block if given. Otherwise, the
 connection is returned.
@@ -74,3 +75,16 @@ connection is returned.
 
     connection = TokyoManager.connection_for_date(date)
     # do something with the connection
+
+## Deleting Instances
+
+To delete a master instance of TokyoTyrant:
+
+    tokyo-manager delete --master --date 201201
+
+To delete a slave instance of TokyoTyrant:
+
+    tokyo-manager delete --slave --date 201201
+
+This will remove the launch script and the data associated with the instance
+for the given date.

@@ -9,10 +9,32 @@ module TokyoManager
       create_upstart_script(:master, date, arguments)
     end
 
+    # Deletes an upstart script for a master instance of TokyoTyrant.
+    def delete_master_launch_script(date)
+      delete_upstart_script(:master, date)
+    end
+
+    # Deletes the data for a master instance of TokyoTyrant.
+    def delete_master_data(date)
+      format = default_master_server_arguments(nil, date)[:format]
+      delete_data(:master, date, format)
+    end
+
     # Creates an upstart script for running a slave instance of TokyoTyrant.
     def create_slave_launch_script(master_host, master_port, slave_port, date)
       arguments = default_slave_server_arguments(master_host, master_port, slave_port, date)
       create_upstart_script(:slave, date, arguments)
+    end
+
+    # Deletes an upstart script for a slave instance of TokyoTyrant.
+    def delete_slave_launch_script(date)
+      delete_upstart_script(:slave, date)
+    end
+
+    # Deletes the data for a slave instance of TokyoTyrant.
+    def delete_slave_data(date)
+      format = default_slave_server_arguments(nil, nil, nil, date)[:format]
+      delete_data(:slave, date, format)
     end
 
     # If a master server is running to store data for 2 months prior to the
@@ -126,6 +148,16 @@ module TokyoManager
       File.open(upstart_script_filename(type, date), 'w') do |file|
         file.write(erb.result(binding))
       end
+    end
+
+    # Deletes the upstart script for running an instance of TokyoTyrant for a date.
+    def delete_upstart_script(type, date)
+      File.delete(upstart_script_filename(type, date))
+    end
+
+    # Deletes the data file for an instance of TokyoTyrant for a date.
+    def delete_data(type, date, format)
+      File.delete("#{data_directory}/ssdata-#{type}-#{date.strftime('%Y%m')}.#{format}")
     end
 
     # Restarts the server using upstart.

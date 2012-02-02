@@ -54,4 +54,54 @@ describe "TokyoManager::InstanceManager" do
       end
     end
   end
+
+  describe "delete_master_for_date" do
+    context "when the server is not running" do
+      before do
+        subject.stub(:server_running_on_port?).and_return(false)
+      end
+
+      it "raises an error" do
+        lambda { subject.delete_master_for_date(Date.new(2012, 2, 1)) }.should raise_error('Server is not running for 02/2012 on port 10505')
+      end
+    end
+
+    context "when the server is running" do
+      before do
+        subject.stub(:server_running_on_port?).and_return(true)
+      end
+
+      it "stops the server, deletes the launch script, and deletes the data" do
+        subject.should_receive(:stop_server)
+        subject.should_receive(:delete_master_launch_script)
+        subject.should_receive(:delete_master_data)
+        subject.delete_master_for_date(Date.new(2012, 2, 1))
+      end
+    end
+  end
+
+  describe "delete_slave_for_date" do
+    context "when the server is not running" do
+      before do
+        subject.stub(:server_running_on_port?).and_return(false)
+      end
+
+      it "raises an error" do
+        lambda { subject.delete_slave_for_date(Date.new(2012, 2, 1)) }.should raise_error('Server is not running for 02/2012 on port 12505')
+      end
+    end
+
+    context "when the server is running" do
+      before do
+        subject.stub(:server_running_on_port?).and_return(true)
+      end
+
+      it "stops the server, deletes the launch script, and deletes the data" do
+        subject.should_receive(:stop_server)
+        subject.should_receive(:delete_slave_launch_script)
+        subject.should_receive(:delete_slave_data)
+        subject.delete_slave_for_date(Date.new(2012, 2, 1))
+      end
+    end
+  end
 end

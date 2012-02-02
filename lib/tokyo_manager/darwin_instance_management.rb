@@ -6,9 +6,31 @@ module TokyoManager
       create_launchd_script(port, date)
     end
 
+    # Deletes a launchd script for a master instance of TokyoTyrant.
+    def delete_master_launch_script(date)
+      delete_launchd_script(date)
+    end
+
+    # Deletes the data for a master instance of TokyoTyrant.
+    def delete_master_data(date)
+      delete_data(date)
+    end
+
     # Creates a launchd script for running a slave instance of TokyoTyrant.
     # This is not supported on Mac OS X.
     def create_slave_launch_script(master_host, master_port, slave_port, date)
+      raise 'Slave instances are only supported on Linux'
+    end
+
+    # Deletes a launchd script for a slave instance of TokyoTyrant.
+    # This is not supported on Mac OS X.
+    def delete_slave_launch_script(date)
+      raise 'Slave instances are only supported on Linux'
+    end
+
+    # Deletes the data for a slave instance of TokyoTyrant.
+    # This is not supported on Mac OS X.
+    def delete_slave_data(date)
       raise 'Slave instances are only supported on Linux'
     end
 
@@ -58,6 +80,16 @@ module TokyoManager
       File.open(launchd_script_filename(date), 'w') do |file|
         file.write(erb.result(binding))
       end
+    end
+
+    # Deletes the launchd script for running an instance of TokyoTyrant for a date.
+    def delete_launchd_script(date)
+      File.delete(launchd_script_filename(date))
+    end
+
+    # Deletes the data file for an instance of TokyoTyrant for a date.
+    def delete_data(date)
+      File.delete("#{data_directory}/db-#{date.strftime('%Y%m')}.tch")
     end
   end
 end

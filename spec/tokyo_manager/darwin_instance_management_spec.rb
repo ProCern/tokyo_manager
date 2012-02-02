@@ -21,9 +21,47 @@ describe TokyoManager::DarwinInstanceManagement do
     end
   end
 
+  describe "delete_master_launch_script" do
+    it "deletes a launch script" do
+      subject.stub(:script_directory).and_return(File.expand_path('../../../tmp', __FILE__))
+
+      file_path = File.expand_path('../../../tmp/org.tokyotyrant.ttserver-201202.plist', __FILE__)
+      File.open(file_path, 'w') { |file| file.write('test') }
+
+      subject.delete_master_launch_script(Date.new(2012, 2, 1))
+
+      File.exists?(file_path).should be_false
+    end
+  end
+
+  describe "delete_master_data" do
+    it "deletes the database file" do
+      subject.stub(:data_directory).and_return(File.expand_path('../../../tmp', __FILE__))
+
+      file_path = File.expand_path('../../../tmp/db-201202.tch', __FILE__)
+      File.open(file_path, 'w') { |file| file.write('test') }
+
+      subject.delete_master_data(Date.new(2012, 2, 1))
+
+      File.exists?(file_path).should be_false
+    end
+  end
+
   describe "create_slave_launch_script" do
     it "is not supported" do
       lambda { subject.create_slave_launch_script('tt.ssbe.api', 12345, 23456, Date.today) }.should raise_error('Slave instances are only supported on Linux')
+    end
+  end
+
+  describe "delete_slave_launch_script" do
+    it "is not supported" do
+      lambda { subject.delete_slave_launch_script(Date.today) }.should raise_error('Slave instances are only supported on Linux')
+    end
+  end
+
+  describe "delete_slave_data" do
+    it "is not supported" do
+      lambda { subject.delete_slave_data(Date.today) }.should raise_error('Slave instances are only supported on Linux')
     end
   end
 

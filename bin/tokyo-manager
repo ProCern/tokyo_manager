@@ -21,6 +21,8 @@ module TokyoManager
   #     tokyo-manager start --slave
   #     tokyo-manager start --slave --date 201202
   #     tokyo-manager start --slave --master-host tt.ssbe.api
+  #     tokyo-manager delete --master --date 201202
+  #     tokyo-manager delete --slave --date 201202
   class CLI < Thor
     include Thor::Actions
     default_task :help
@@ -42,6 +44,22 @@ module TokyoManager
         start_slave(options)
       else
         invoke :help, [:start]
+      end
+    end
+
+    desc 'delete', 'Delete an instance of TokyoTyrant'
+    method_option :master, :type => :boolean, :default => false, :alias => '-m', :desc => 'delete a master instance'
+    method_option :slave, :type => :boolean, :default => false, :alias => '-s', :desc => 'delete a slave instance'
+    method_option :date, :type => :string, :alias => '-d', :desc => 'the date to delete an instance for (YYYYMM)', :required => true
+
+    # Deletes a TokyoTyrant server instance and its data.
+    def delete
+      if options.master?
+        delete_master(options)
+      elsif options.slave?
+        delete_slave(options)
+      else
+        invoke :help, [:delete]
       end
     end
 
@@ -83,6 +101,30 @@ module TokyoManager
 
         begin
           TokyoManager.start_slave_for_date(date, options[:'master-host'] || TokyoManager.configuration.host)
+        rescue => e
+          puts e.message
+        end
+      end
+
+      # Deletes a master TokyoTyrant instance.
+      def delete_master(options)
+        date = instance_date(options)
+        puts "Deleting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
+
+        begin
+          TokyoManager.delete_master_for_date(date)
+        rescue => e
+          puts e.message
+        end
+      end
+
+      # Deletes a slave TokyoTyrant instance.
+      def delete_slave(options)
+        date = instance_date(options)
+        puts "Deleting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
+
+        begin
+          TokyoManager.delete_slave_for_date(date)
         rescue => e
           puts e.message
         end
