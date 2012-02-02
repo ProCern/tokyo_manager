@@ -65,8 +65,8 @@ will be returned. Otherwise, a connection to the instance running on the default
 port will be returned. If no connection can be established, an error will be
 raised.
 
-This method will yeild the connection to a block if given and close the
-connection after the block is executed. Otherwise, the connection is returned.
+This method will yeild the connection to a block if given. Otherwise, the
+connection is returned.
 
     TokyoManager.connection_for_date(date) do |connection|
       # do something with the connection
@@ -74,4 +74,3 @@ connection after the block is executed. Otherwise, the connection is returned.
 
     connection = TokyoManager.connection_for_date(date)
     # do something with the connection
-    connection.close
