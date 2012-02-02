@@ -58,7 +58,6 @@ module TokyoManager
       connection_key = "#{host}:#{port}"
 
       if connection = connections[connection_key]
-        connection.reconnect
         return connection
       end
 
