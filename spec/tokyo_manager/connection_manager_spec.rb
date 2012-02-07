@@ -12,7 +12,7 @@ describe TokyoManager::ConnectionManager do
       let(:connection) { Object.new }
 
       before do
-        TokyoTyrant::DB.should_receive(:new).with('localhost', 10504).and_return(connection)
+        TokyoTyrant::DB.should_receive(:new).with('localhost', 10504, 0.0, true).and_return(connection)
       end
 
       it "returns a connection to the instance" do
@@ -25,8 +25,8 @@ describe TokyoManager::ConnectionManager do
         let(:connection) { Object.new }
 
         before do
-          TokyoTyrant::DB.should_receive(:new).with('localhost', 10504).and_raise(TokyoTyrantErrorRefused)
-          TokyoTyrant::DB.should_receive(:new).with('localhost', 1978).and_return(connection)
+          TokyoTyrant::DB.should_receive(:new).with('localhost', 10504, 0.0, true).and_raise(TokyoTyrantErrorRefused)
+          TokyoTyrant::DB.should_receive(:new).with('localhost', 1978, 0.0, true).and_return(connection)
         end
 
         it "returns a connection to the default instance" do
@@ -36,8 +36,8 @@ describe TokyoManager::ConnectionManager do
 
       context "when an instance is not running on the default port" do
         before do
-          TokyoTyrant::DB.should_receive(:new).with('localhost', 10504).and_raise(TokyoTyrantErrorRefused)
-          TokyoTyrant::DB.should_receive(:new).with('localhost', 1978).and_raise(TokyoTyrantErrorRefused)
+          TokyoTyrant::DB.should_receive(:new).with('localhost', 10504, 0.0, true).and_raise(TokyoTyrantErrorRefused)
+          TokyoTyrant::DB.should_receive(:new).with('localhost', 1978, 0.0, true).and_raise(TokyoTyrantErrorRefused)
         end
 
         it "raises an error" do

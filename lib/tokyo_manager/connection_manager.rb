@@ -62,23 +62,37 @@ module TokyoManager
       end
 
       begin
-        connection = TokyoTyrant::DB.new(host, port)
+        connection = TokyoTyrant::DB.new(host, port, 0.0, true)
+        connections[connection_key] = connection
       rescue TokyoTyrantErrorRefused
-        begin
-          # if no database exists for the given date, fall back to the legacy database on the default port
-          default_port = TokyoManager.configuration.default_port
-          connection = TokyoTyrant::DB.new(host, default_port)
-          connections["#{host}:#{default_port}"] = connection
-        rescue TokyoTyrantErrorRefused
-          connection = nil
-        end
+        # if no database exists for the given date, fall back to the legacy database on the default port
+        connection = default_connection
       end
 
       unless connection
         raise "Failed to connect to TokyoTyrant at #{host}:#{port}"
       end
 
-      connections[connection_key] = connection
+      connection
+    end
+
+    private
+
+    # Gets a connection to the TokyoTyrant instance running on the default port.
+    def default_connection
+      host = TokyoManager.configuration.host
+      default_port = TokyoManager.configuration.default_port
+      default_connection_key = "#{host}:#{default_port}"
+
+      unless connection = connections[default_connection_key]
+        begin
+          connection = TokyoTyrant::DB.new(host, default_port, 0.0, true)
+          connections[default_connection_key] = connection
+        rescue TokyoTyrantErrorRefused
+          connection = nil
+        end
+      end
+
       connection
     end
   end
