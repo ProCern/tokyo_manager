@@ -32,7 +32,25 @@ module TokyoManager
 
     desc 'start', 'Start a new instance of TokyoTyrant'
     method_option :master, :type => :boolean, :default => false, :alias => '-m', :desc => 'start a master instance'
+    method_option :'master-sid', :type => :string, :default => '1', :desc => 'sid setting for a master instance'
+    method_option :'master-thnum', :type => :string, :default => '16', :desc => 'thnum setting for a master instance'
+    method_option :'master-bnum', :type => :string, :default => '503316469', :desc => 'bnum setting for a master instance'
+    method_option :'master-apow', :type => :string, :default => '11', :desc => 'apow setting for a master instance'
+    method_option :'master-fpow', :type => :string, :default => '18', :desc => 'fpow setting for a master instance'
+    method_option :'master-ncnum', :type => :string, :default => '6000000', :desc => 'ncnum setting for a master instance'
+    method_option :'master-xmsiz', :type => :string, :default => '1073741824', :desc => 'xmsiz setting for a master instance'
+    method_option :'master-opts', :type => :string, :default => 'lb', :desc => 'opts setting for a master instance'
+    method_option :'old-master-xmsiz', :type => :string, :default => '268435456', :desc => 'xmsiz setting for old master instances'
     method_option :slave, :type => :boolean, :default => false, :alias => '-s', :desc => 'start a slave instance'
+    method_option :'slave-sid', :type => :string, :default => '2', :desc => 'sid setting for a slave instance'
+    method_option :'slave-thnum', :type => :string, :default => '24', :desc => 'thnum setting for a slave instance'
+    method_option :'slave-bnum', :type => :string, :default => '503316469', :desc => 'bnum setting for a slave instance'
+    method_option :'slave-apow', :type => :string, :default => '11', :desc => 'apow setting for a slave instance'
+    method_option :'slave-fpow', :type => :string, :default => '18', :desc => 'fpow setting for a slave instance'
+    method_option :'slave-ncnum', :type => :string, :default => '3000000', :desc => 'ncnum setting for a slave instance'
+    method_option :'slave-xmsiz', :type => :string, :default => '536870912', :desc => 'xmsiz setting for a slave instance'
+    method_option :'slave-opts', :type => :string, :default => 'lb', :desc => 'opts setting for a slave instance'
+    method_option :'old-slave-xmsiz', :type => :string, :default => '134217728', :desc => 'xmsiz setting for old slave instances'
     method_option :date, :type => :string, :alias => '-d', :desc => 'the date to start an instance for (YYYYMM)'
     method_option :'master-host', :type => :string, :alias => '-h', :desc => 'when starting a slave, the host the master is on'
 
@@ -88,7 +106,7 @@ module TokyoManager
         puts "Starting master instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
 
         begin
-          TokyoManager.start_master_for_date(date)
+          TokyoManager.start_master_for_date(date, options)
         rescue => e
           puts e.message
         end
@@ -100,7 +118,7 @@ module TokyoManager
         puts "Starting slave instance of TokyoTyrant for #{date.strftime('%m/%Y')}"
 
         begin
-          TokyoManager.start_slave_for_date(date, options[:'master-host'] || TokyoManager.configuration.host)
+          TokyoManager.start_slave_for_date(date, options[:'master-host'] || TokyoManager.configuration.host, options)
         rescue => e
           puts e.message
         end

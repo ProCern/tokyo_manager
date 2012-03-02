@@ -26,6 +26,35 @@ describe TokyoManager::LinuxInstanceManagement do
       contents.should match(/ssdata-master-201202/)
       contents.should match(/-port 12345/)
     end
+
+    context "when options are given" do
+      it "creates an upstart script with the given options" do
+        options = {
+          'master-sid' => 'sid',
+          'master-thnum' => 'thnum',
+          'master-bnum' => 'bnum',
+          'master-apow' => 'apow',
+          'master-fpow' => 'fpow',
+          'master-ncnum' => 'ncnum',
+          'master-xmsiz' => 'xmsiz',
+          'master-opts' => 'opts'
+        }
+
+        subject.create_master_launch_script(12345, Date.new(2012, 2, 1), options)
+
+        File.exists?(file_path).should be_true
+
+        contents = File.read(file_path)
+        contents.should match(/-sid sid/)
+        contents.should match(/-thnum thnum/)
+        contents.should match(/bnum=bnum/)
+        contents.should match(/apow=apow/)
+        contents.should match(/fpow=fpow/)
+        contents.should match(/ncnum=ncnum/)
+        contents.should match(/xmsiz=xmsiz/)
+        contents.should match(/opts=opts/)
+      end
+    end
   end
 
   describe "delete_master_launch_script" do
@@ -71,6 +100,35 @@ describe TokyoManager::LinuxInstanceManagement do
       contents.should match(/ssdata-slave-201202/)
       contents.should match(/-port 23456/)
       contents.should match(/-mport 12345/)
+    end
+
+    context "when options are given" do
+      it "creates an upstart script with the given options" do
+        options = {
+          'slave-sid' => 'sid',
+          'slave-thnum' => 'thnum',
+          'slave-bnum' => 'bnum',
+          'slave-apow' => 'apow',
+          'slave-fpow' => 'fpow',
+          'slave-ncnum' => 'ncnum',
+          'slave-xmsiz' => 'xmsiz',
+          'slave-opts' => 'opts'
+        }
+
+        subject.create_slave_launch_script('tt.ssbe.api', 12345, 23456, Date.new(2012, 2, 1), options)
+
+        File.exists?(file_path).should be_true
+
+        contents = File.read(file_path)
+        contents.should match(/-sid sid/)
+        contents.should match(/-thnum thnum/)
+        contents.should match(/bnum=bnum/)
+        contents.should match(/apow=apow/)
+        contents.should match(/fpow=fpow/)
+        contents.should match(/ncnum=ncnum/)
+        contents.should match(/xmsiz=xmsiz/)
+        contents.should match(/opts=opts/)
+      end
     end
   end
 
@@ -134,6 +192,36 @@ describe TokyoManager::LinuxInstanceManagement do
         contents.should match(/-port 10503/)
         contents.should match(/xmsiz=268435456/)
       end
+
+      context "when options are given" do
+        it "creates an upstart script with the given options" do
+          options = {
+            'master-sid' => 'sid',
+            'master-thnum' => 'thnum',
+            'master-bnum' => 'bnum',
+            'master-apow' => 'apow',
+            'master-fpow' => 'fpow',
+            'master-ncnum' => 'ncnum',
+            'master-xmsiz' => 'xmsiz',
+            'master-opts' => 'opts',
+            'old-master-xmsiz' => 'oldxmsiz'
+          }
+
+          subject.reduce_old_master_server_memory(Date.new(2012, 2, 1), options)
+
+          File.exists?(file_path).should be_true
+
+          contents = File.read(file_path)
+          contents.should match(/-sid sid/)
+          contents.should match(/-thnum thnum/)
+          contents.should match(/bnum=bnum/)
+          contents.should match(/apow=apow/)
+          contents.should match(/fpow=fpow/)
+          contents.should match(/ncnum=ncnum/)
+          contents.should match(/xmsiz=oldxmsiz/)
+          contents.should match(/opts=opts/)
+        end
+      end
     end
   end
 
@@ -171,6 +259,36 @@ describe TokyoManager::LinuxInstanceManagement do
         contents.should match(/-port 12503/)
         contents.should match(/-mport 10503/)
         contents.should match(/xmsiz=134217728/)
+      end
+
+      context "when options are given" do
+        it "creates an upstart script with the given options" do
+          options = {
+            'slave-sid' => 'sid',
+            'slave-thnum' => 'thnum',
+            'slave-bnum' => 'bnum',
+            'slave-apow' => 'apow',
+            'slave-fpow' => 'fpow',
+            'slave-ncnum' => 'ncnum',
+            'slave-xmsiz' => 'xmsiz',
+            'slave-opts' => 'opts',
+            'old-slave-xmsiz' => 'oldxmsiz'
+          }
+
+          subject.reduce_old_slave_server_memory('tt.ssbe.api', Date.new(2012, 2, 1), options)
+
+          File.exists?(file_path).should be_true
+
+          contents = File.read(file_path)
+          contents.should match(/-sid sid/)
+          contents.should match(/-thnum thnum/)
+          contents.should match(/bnum=bnum/)
+          contents.should match(/apow=apow/)
+          contents.should match(/fpow=fpow/)
+          contents.should match(/ncnum=ncnum/)
+          contents.should match(/xmsiz=oldxmsiz/)
+          contents.should match(/opts=opts/)
+        end
       end
     end
   end
