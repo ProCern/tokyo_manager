@@ -4,8 +4,9 @@ module TokyoManager
   # Provides methods for managing instances of TokyoTyrant running on Linux.
   module LinuxInstanceManagement
     # Creates an upstart script for running a master instance of TokyoTyrant.
-    def create_master_launch_script(port, date)
-      arguments = default_master_server_arguments(port, date)
+    def create_master_launch_script(port, date, options = {})
+      options = extract_master_instance_options(options)
+      arguments = default_master_server_arguments(port, date).merge(options)
       create_upstart_script(:master, date, arguments)
     end
 
@@ -21,8 +22,9 @@ module TokyoManager
     end
 
     # Creates an upstart script for running a slave instance of TokyoTyrant.
-    def create_slave_launch_script(master_host, master_port, slave_port, date)
-      arguments = default_slave_server_arguments(master_host, master_port, slave_port, date)
+    def create_slave_launch_script(master_host, master_port, slave_port, date, options = {})
+      options = extract_slave_instance_options(options)
+      arguments = default_slave_server_arguments(master_host, master_port, slave_port, date).merge(options)
       create_upstart_script(:slave, date, arguments)
     end
 
@@ -40,12 +42,13 @@ module TokyoManager
     # If a master server is running to store data for 2 months prior to the
     # given date, its configuration is modified to use less memory and it is
     # restarted.
-    def reduce_old_master_server_memory(date)
+    def reduce_old_master_server_memory(date, options = {})
       date -= 2.months
       port = master_port_for_date(date)
 
       if File.exists?(upstart_script_filename(:master, date)) && server_running_on_port?(port)
-        arguments = default_master_server_arguments(port, date).merge(:xmsiz => '268435456')
+        options = extract_old_master_instance_options(options)
+        arguments = default_old_master_server_arguments(port, date).merge(options)
         create_upstart_script(:master, date, arguments)
 
         restart_server(:master, date)
@@ -55,13 +58,14 @@ module TokyoManager
     # If a slave server is running to store data for 2 months prior to the
     # given date, its configuration is modified to use less memory and it is
     # restarted.
-    def reduce_old_slave_server_memory(master_host, date)
+    def reduce_old_slave_server_memory(master_host, date, options = {})
       date -= 2.months
       master_port = master_port_for_date(date)
       slave_port = slave_port_for_date(date)
 
       if File.exists?(upstart_script_filename(:slave, date)) && server_running_on_port?(slave_port)
-        arguments = default_slave_server_arguments(master_host, master_port, slave_port, date).merge(:xmsiz => '134217728')
+        options = extract_old_slave_instance_options(options)
+        arguments = default_old_slave_server_arguments(master_host, master_port, slave_port, date).merge(options)
         create_upstart_script(:slave, date, arguments)
 
         restart_server(:slave, date)
@@ -118,6 +122,11 @@ module TokyoManager
       }
     end
 
+    # Gets the default arguments used to start an old master instance of TokyoTyrant.
+    def default_old_master_server_arguments(port, date)
+      default_master_server_arguments(port, date).merge(:xmsiz => '268435456')
+    end
+
     # Gets the default arguments used to start a slave instance of TokyoTyrant.
     def default_slave_server_arguments(master_host, master_port, slave_port, date)
       {
@@ -136,6 +145,11 @@ module TokyoManager
         :date => date.strftime('%Y%m'),
         :port => slave_port
       }
+    end
+
+    # Gets the default arguments used to start an old slave instance of TokyoTyrant.
+    def default_old_slave_server_arguments(master_host, master_port, slave_port, date)
+      default_slave_server_arguments(master_host, master_port, slave_port, date).merge(:xmsiz => '134217728')
     end
 
     # Creates the upstart script to run an instance of TokyoTyrant for a date.
@@ -164,6 +178,38 @@ module TokyoManager
     def restart_server(type, date)
       stop_server(type, date)
       start_server(type, date)
+    end
+
+    # Extracts options for master TokyoTyrant instances from an options hash.
+    def extract_master_instance_options(options)
+      extract_instance_options('master-', options)
+    end
+
+    # Extracts options for old master TokyoTyrant instances from an options hash.
+    def extract_old_master_instance_options(options)
+      extract_instance_options('master-', options).merge(extract_instance_options('old-master-', options))
+    end
+
+    # Extracts options for slave TokyoTyrant instances from an options hash.
+    def extract_slave_instance_options(options)
+      extract_instance_options('slave-', options)
+    end
+
+    # Extracts options for old slave TokyoTyrant instances from an options hash.
+    def extract_old_slave_instance_options(options)
+      extract_instance_options('slave-', options).merge(extract_instance_options('old-slave-', options))
+    end
+
+    # Extracts options for TokyoTyrant instances from an options hash.
+    def extract_instance_options(prefix, options)
+      acceptable_keys = ['sid', 'thnum', 'bnum', 'apow', 'fpow', 'ncnum', 'xmsiz', 'opts']
+      keys = options.keys.select { |key| key.to_s.starts_with? prefix }
+
+      keys.inject({}) do |hash, key|
+        real_key = key.to_s.gsub(/^#{prefix}/, '')
+        hash[real_key.to_sym] = options[key] if acceptable_keys.include? real_key
+        hash
+      end
     end
   end
 end
