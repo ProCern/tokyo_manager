@@ -82,11 +82,6 @@ module TokyoManager
       Shell.execute "stop #{upstart_script_filename(type, date).gsub(/^#{script_directory}\//, '').gsub(/\.conf$/, '')}"
     end
 
-    # Gets the directory used for storing data files for TokyoTyrant.
-    def data_directory
-      '/data/tokyotyrant'
-    end
-
     # Gets the directory used for storing log files for TokyoTyrant.
     def log_directory
       '/var/log/tokyotyrant'

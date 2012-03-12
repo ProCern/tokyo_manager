@@ -46,13 +46,17 @@ module TokyoManager
   class InstanceManager
     include TokyoManager::Helpers
 
+    attr_reader :data_directory
+
     # Includes the correct module for managing instances of TokyoTyrant
     # depending on the platform we are running on.
     def initialize
       if linux?
         extend TokyoManager::LinuxInstanceManagement
+        @data_directory = '/data/tokyotyrant'
       else
         extend TokyoManager::DarwinInstanceManagement
+        @data_directory = '/usr/local/var/tokyo-tyrant'
       end
     end
 
@@ -63,6 +67,7 @@ module TokyoManager
     # date is reconfigured to use less memory and restarted.
     def start_master_for_date(date, options = {})
       port = master_port_for_date(date)
+      @data_directory = options['data-directory'] if options['data-directory']
 
       if server_running_on_port?(port)
         raise "Server is already running for #{date.strftime('%m/%Y')} on port #{port}"
@@ -81,6 +86,7 @@ module TokyoManager
     def start_slave_for_date(date, master_host, options = {})
       master_port = master_port_for_date(date)
       slave_port = slave_port_for_date(date)
+      @data_directory = options['data-directory'] if options['data-directory']
 
       if server_running_on_port?(slave_port)
         raise "Server is already running for #{date.strftime('%m/%Y')} on port #{slave_port}"

@@ -51,8 +51,9 @@ module TokyoManager
     method_option :'slave-xmsiz', :type => :string, :default => '536870912', :desc => 'xmsiz setting for a slave instance'
     method_option :'slave-opts', :type => :string, :default => 'lb', :desc => 'opts setting for a slave instance'
     method_option :'old-slave-xmsiz', :type => :string, :default => '134217728', :desc => 'xmsiz setting for old slave instances'
-    method_option :date, :type => :string, :alias => '-d', :desc => 'the date to start an instance for (YYYYMM)'
     method_option :'master-host', :type => :string, :alias => '-h', :desc => 'when starting a slave, the host the master is on'
+    method_option :date, :type => :string, :alias => '-d', :desc => 'the date to start an instance for (YYYYMM)'
+    method_option :'data-directory', :type => :string, :desc => 'the directory to store the data in'
 
     # Starts a new TokyoTyrant server instance as either a master or a slave.
     def start

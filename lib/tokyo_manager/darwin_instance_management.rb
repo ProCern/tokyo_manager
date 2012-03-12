@@ -2,7 +2,7 @@ module TokyoManager
   # Provides methods for managing instances of TokyoTyrant running on Mac OS X.
   module DarwinInstanceManagement
     # Creates a launchd script for running a master instance of TokyoTyrant.
-    def create_master_launch_script(port, date)
+    def create_master_launch_script(port, date, options = {})
       create_launchd_script(port, date)
     end
 
@@ -18,7 +18,7 @@ module TokyoManager
 
     # Creates a launchd script for running a slave instance of TokyoTyrant.
     # This is not supported on Mac OS X.
-    def create_slave_launch_script(master_host, master_port, slave_port, date)
+    def create_slave_launch_script(master_host, master_port, slave_port, date, options = {})
       raise 'Slave instances are only supported on Linux'
     end
 
@@ -46,11 +46,6 @@ module TokyoManager
       if type == :master
         Shell.execute "launchctl unload -w #{launchd_script_filename(date)}"
       end
-    end
-
-    # Gets the directory used for storing data files for TokyoTyrant.
-    def data_directory
-      '/usr/local/var/tokyo-tyrant'
     end
 
     # Gets the directory used for storing log files for TokyoTyrant.
