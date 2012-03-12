@@ -149,14 +149,14 @@ module TokyoManager
 
     # Creates the upstart script to run an instance of TokyoTyrant for a date.
     def create_upstart_script(type, date, arguments)
+      filename = upstart_script_filename(type, date)
       template = File.read(File.expand_path('../../templates/upstart.conf.erb', __FILE__))
       erb = ERB.new(template)
 
       @template_arguments = arguments
 
-      File.open(upstart_script_filename(type, date), 'w') do |file|
-        file.write(erb.result(binding))
-      end
+      File.open(filename, 'w') { |file| file.write(erb.result(binding)) }
+      FileUtils.ln_s '/lib/init/upstart-job', "/etc/init.d/#{File.basename(filename)}"
     end
 
     # Deletes the upstart script for running an instance of TokyoTyrant for a date.
