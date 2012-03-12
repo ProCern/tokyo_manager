@@ -156,7 +156,7 @@ module TokyoManager
       @template_arguments = arguments
 
       File.open(filename, 'w') { |file| file.write(erb.result(binding)) }
-      FileUtils.ln_s '/lib/init/upstart-job', "/etc/init.d/#{File.basename(filename)}"
+      FileUtils.ln_s '/lib/init/upstart-job', "/etc/init.d/#{File.basename(filename, '.conf')}"
     end
 
     # Deletes the upstart script for running an instance of TokyoTyrant for a date.
